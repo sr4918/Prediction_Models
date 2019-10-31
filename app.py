@@ -42,7 +42,7 @@ rf_model=pickle.load(open("rf_model.sav",'rb'))
 #students_test=students[students['student_id'].isin(semesters_test['student_id'].tolist())]
 
 def get_student_data(student_id):
-    student_data=students_test[students_test['student_id']==student_id]
+   student_data=students_test[students_test['student_id']==id]
     print(student_data)
     factor1=student_data['prior_prob_count'].values[0]
     factor2=student_data['prior_percent_correct'].values[0]
@@ -66,7 +66,7 @@ def get_student_data(student_id):
     #student_cluster=clus_students.predict(student_data)[0]
     #semester_cluster=clus_semesters.predict(semester_data)[0]
     
-    similar_students=students_train[students_train["cluster"]==student_cluster]
+    #similar_students=students_train[students_train["cluster"]==student_cluster]
 #    similar_students_ids=similar_students["student_id"].tolist()
     
    # selected_semesters=semesters_train[semesters_train["student_id"].isin(similar_students_ids)]
@@ -88,7 +88,7 @@ def get_student_data(student_id):
     
 opt_st=[]
 for student in students_test['id'].values:
-    opt_st.append({'label': student, 'value': student})
+    opt_st.append({'label': student, 'value': id})
 
 navbar = dbc.Navbar(
     children=[
@@ -209,43 +209,45 @@ app.layout = html.Div(children=[navbar,body]
 
 
 @app.callback(
-    [Output("student_graph", "figure"),
-     Output("student_gpa", "value"),
-     Output("order", "value"),
+#    [Output("student_graph", "figure"),
+ #    Output("student_gpa", "value"),
+  #   Output("order", "value"),
      Output("beta", "value"),
-     Output("classes", "value"),
-     Output("risk-gauge", "value"),
-     Output("certainty-gauge", "value")],
-    [Input("student", "value"),
+   #  Output("classes", "value"),
+    # Output("risk-gauge", "value"),
+     #Output("certainty-gauge", "value")],
+    #Input("student", "value"),
      Input("model", "value")],
 )
+
 def update_plots(student_value,model_value):
-    factor1,factor2,factor3,factor4,factor5,gpa=get_student_data(student_value)
-    order,beta_total,num_classes=get_semester_data(student_value)
+    prior_prob_count,prior_percent_correct,score,hints,result=student_data['result'].values[0]
+#=get_student_data(student_value)
+ #   order,beta_total,num_classes=get_semester_data(student_value)
     
-    if(model_value==1):
-        risk,certainty=get_new_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order,beta_total,num_classes)
-    else:
-        risk,certainty=get_forest_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order,beta_total,num_classes)
+  #  if(model_value==1):
+   #     risk,certainty=get_new_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order,beta_total,num_classes)
+   # else:
+    #    risk,certainty=get_forest_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order,beta_total,num_classes)
         
-    data_semester = [
-        {
-            "x": ['Factor 1','Factor 2', 'Factor 3', 'Factor 4', 'Factor 5', 'GPA'],
-            "y": [factor1,factor2,factor3,factor4,factor5,gpa],
-            #"y": [10,5,8,4,3,2],
-            "text": ['Factor 1','Factor 2', 'Factor 3', 'Factor 4', 'Factor 5', 'GPA'],
-            "type": "bar",
-            "name": student_value,
-        }
-    ]
-    layout_semester = {
-        "autosize": True,
-        "xaxis": {"showticklabels": True},
-    }
+    #data_semester = [
+     #   {
+      #      "x": ['Factor 1','Factor 2', 'Factor 3', 'Factor 4', 'Factor 5', 'GPA'],
+       #     "y": [factor1,factor2,factor3,factor4,factor5,gpa],
+        #    #"y": [10,5,8,4,3,2],
+         #   "text": ['Factor 1','Factor 2', 'Factor 3', 'Factor 4', 'Factor 5', 'GPA'],
+          #  "type": "bar",
+           # "name": student_value,
+    #    }
+    #]
+    #layout_semester = {
+     #   "autosize": True,
+      #  "xaxis": {"showticklabels": True},
+    #}
     
     data_student = [{
             "type": 'scatterpolar',
-            "r": [factor1, factor2, factor3, factor4, factor5, factor1],
+            "r": [prior_prob_count,prior_percent_correct,score,hints,prior_prob_count],
             "theta": ['Factor 1','Factor 2','Factor 3', 'Factor 4', 'Factor 5', 'Factor 1'],
             "fill": 'toself'
             }]
@@ -259,8 +261,8 @@ def update_plots(student_value,model_value):
             },
             "showlegend": False
             }
-
-    return {"data": data_student, "layout": layout_student},gpa,order,round(beta_total,2),num_classes,risk,certainty
+     return
+#    return {"data": data_student, "layout": layout_student},result,order,round(beta_total,2),num_classes,risk,certainty
 
 
 # Run the server
