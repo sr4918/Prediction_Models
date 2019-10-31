@@ -30,62 +30,62 @@ server = app.server
 app.config.suppress_callback_exceptions = False
 
 students = pd.read_csv("students.csv")
-semesters = pd.read_csv("semesters.csv")
-students_train = pd.read_csv("students_train.csv")
-semesters_train = pd.read_csv("semesters_train.csv")
+#semesters = pd.read_csv("semesters.csv")
+students_train = students[students['id'] < 150]
+#semesters_train = pd.read_csv("semesters_train.csv")
 clus_students = pickle.load(open("student_model.sav", 'rb'))
-clus_semesters = pickle.load(open("semester_model.sav", 'rb'))
+#clus_semesters = pickle.load(open("semester_model.sav", 'rb'))
 rf_model=pickle.load(open("rf_model.sav",'rb'))
 
-semesters_test=semesters[semesters['year'] > 2011]
-students_test=students[students['student_id'].isin(semesters_test['student_id'].tolist())]
+#semesters_test=semesters[semesters['year'] > 2011]
 
+#students_test=students[students['student_id'].isin(semesters_test['student_id'].tolist())]
 
+'prior_prob_count', 'prior_percent_correct','score','hints'
 def get_student_data(student_id):
     student_data=students_test[students_test['student_id']==student_id]
     print(student_data)
-    factor1=student_data['factor1'].values[0]
-    factor2=student_data['factor2'].values[0]
-    factor3=student_data['factor3'].values[0]
-    factor4=student_data['factor4'].values[0]
-    factor5=student_data['factor5'].values[0]
-    gpa=student_data['gpa'].values[0]
-    return factor1,factor2,factor3,factor4,factor5,gpa
+    factor1=student_data['prior_prob_count'].values[0]
+    factor2=student_data['prior_percent_correct'].values[0]
+    factor3=student_data['score'].values[0]
+    factor4=student_data['hints'].values[0]
+    result=student_data['result'].values[0]
+    return factor1,factor2,factor3,factor4,result
 
-def get_semester_data(student_id):
-    semester_data=semesters_test[semesters_test['student_id']==student_id]
-    order=semester_data['order'].values[0]
-    beta_total=semester_data['beta_total'].values[0]
-    num_classes=semester_data['num_classes'].values[0]
-    return order,beta_total,num_classes
+#def get_semester_data(student_id):
+ #   semester_data=semesters_test[semesters_test['student_id']==student_id]
+  #  order=semester_data['order'].values[0]
+   # beta_total=semester_data['beta_total'].values[0]
+   # num_classes=semester_data['num_classes'].values[0]
+   # return order,beta_total,num_classes
 
-def get_new_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order, beta_total,num_classes):
-    columns_student=["factor1","factor2","factor3","factor4","factor5","gpa"]
-    columns_semester=['order', 'beta_total','num_classes']
-    student_data = pd.DataFrame([[factor1,factor2,factor3,factor4,factor5,gpa]], columns=columns_student)
-    semester_data = pd.DataFrame([[order,beta_total,num_classes]], columns=columns_semester)
-    student_cluster=clus_students.predict(student_data)[0]
-    semester_cluster=clus_semesters.predict(semester_data)[0]
+#def get_new_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order, beta_total,num_classes):
+ #   columns_student=["factor1","factor2","factor3","factor4","factor5","gpa"]
+  #  columns_semester=['order', 'beta_total','num_classes']
+   # student_data = pd.DataFrame([[factor1,factor2,factor3,factor4,factor5,gpa]], columns=columns_student)
+    #semester_data = pd.DataFrame([[order,beta_total,num_classes]], columns=columns_semester)
+    #student_cluster=clus_students.predict(student_data)[0]
+    #semester_cluster=clus_semesters.predict(semester_data)[0]
     
     similar_students=students_train[students_train["cluster"]==student_cluster]
     similar_students_ids=similar_students["student_id"].tolist()
     
-    selected_semesters=semesters_train[semesters_train["student_id"].isin(similar_students_ids)]
-    selected_semesters=selected_semesters[selected_semesters['cluster']==semester_cluster]
+   # selected_semesters=semesters_train[semesters_train["student_id"].isin(similar_students_ids)]
+    #selected_semesters=selected_semesters[selected_semesters['cluster']==semester_cluster]
     
-    total_cases=len(selected_semesters)
-    failed_cases=len(selected_semesters[selected_semesters['fail']==True])
-    risk=failed_cases/total_cases
-    return risk,total_cases
+   # total_cases=len(selected_semesters)
+    #failed_cases=len(selected_semesters[selected_semesters['fail']==True])
+    #risk=failed_cases/total_cases
+    #return risk,total_cases
 
-def get_forest_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order, beta_total,num_classes):
-    df = pd.DataFrame([[factor1,factor2,factor3,factor4,factor5,gpa,order, beta_total,num_classes]], columns=['factor1','factor2','factor3','factor4','factor5','gpa','order','beta_total','num_classes'])
-    prediction=rf_model.predict(df)[0]
-    risk=0
-    if (prediction):
-        risk=1
-    certainty=0.7355
-    return risk,certainty
+#def get_forest_risk_and_uncertainty(factor1,factor2,factor3,factor4,factor5,gpa,order, beta_total,num_classes):
+ #   df = pd.DataFrame([[factor1,factor2,factor3,factor4,factor5,gpa,order, beta_total,num_classes]], columns=['factor1','factor2','factor3','factor4','factor5','gpa','order','beta_total','num_classes'])
+  #  prediction=rf_model.predict(df)[0]
+   # risk=0
+    #if (prediction):
+     #   risk=1
+    #certainty=0.7355
+    #return risk,certainty
     
 opt_st=[]
 for student in students_test['student_id'].values:
