@@ -29,7 +29,7 @@ app = dash.Dash(
 server = app.server
 app.config.suppress_callback_exceptions = False
 
-students = pd.read_csv("students.csv")
+students = pd.read_csv("intelligent.csv")
 #semesters = pd.read_csv("semesters.csv")
 students_train = students[students['id'] < 150]
 #semesters_train = pd.read_csv("semesters_train.csv")
@@ -41,7 +41,6 @@ rf_model=pickle.load(open("rf_model.sav",'rb'))
 
 #students_test=students[students['student_id'].isin(semesters_test['student_id'].tolist())]
 
-'prior_prob_count', 'prior_percent_correct','score','hints'
 def get_student_data(student_id):
     student_data=students_test[students_test['student_id']==student_id]
     print(student_data)
@@ -68,7 +67,7 @@ def get_student_data(student_id):
     #semester_cluster=clus_semesters.predict(semester_data)[0]
     
     similar_students=students_train[students_train["cluster"]==student_cluster]
-    similar_students_ids=similar_students["student_id"].tolist()
+#    similar_students_ids=similar_students["student_id"].tolist()
     
    # selected_semesters=semesters_train[semesters_train["student_id"].isin(similar_students_ids)]
     #selected_semesters=selected_semesters[selected_semesters['cluster']==semester_cluster]
@@ -88,7 +87,7 @@ def get_student_data(student_id):
     #return risk,certainty
     
 opt_st=[]
-for student in students_test['student_id'].values:
+for student in students_test['id'].values:
     opt_st.append({'label': student, 'value': student})
 
 navbar = dbc.Navbar(
