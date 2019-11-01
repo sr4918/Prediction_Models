@@ -41,15 +41,15 @@ rf_model=pickle.load(open("rf_model.sav",'rb'))
 
 #students_test=students[students['student_id'].isin(semesters_test['student_id'].tolist())]
 
-def get_student_data(student_id):
-   student_data=students_test[students_test['student_id']==id]
-    print(student_data)
-    factor1=student_data['prior_prob_count'].values[0]
-    factor2=student_data['prior_percent_correct'].values[0]
-    factor3=student_data['score'].values[0]
-    factor4=student_data['hints'].values[0]
-    result=student_data['result'].values[0]
-    return factor1,factor2,factor3,factor4,result
+#def get_student_data(student_id):
+ #  student_data=students_test[students_test['student_id']==id]
+  #  print(student_data)
+   # factor1=student_data['prior_prob_count'].values[0]
+    #factor2=student_data['prior_percent_correct'].values[0]
+    #factor3=student_data['score'].values[0]
+    #actor4=student_data['hints'].values[0]
+    #result=student_data['result'].values[0]
+    #return factor1,factor2,factor3,factor4,result
 
 #def get_semester_data(student_id):
  #   semester_data=semesters_test[semesters_test['student_id']==student_id]
@@ -87,7 +87,7 @@ def get_student_data(student_id):
     #return risk,certainty
     
 opt_st=[]
-for student in students_test['id'].values:
+for student in students['id'].values:
     opt_st.append({'label': student, 'value': id})
 
 navbar = dbc.Navbar(
@@ -112,97 +112,96 @@ navbar = dbc.Navbar(
 
 body = dbc.Container(
     [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Select Student"),
-                        dcc.Dropdown(
-                           id='student',
-                           options=opt_st,
-                           value=opt_st[0]['value'],
-                           ),
-                        html.Br(),
-                        html.H2("Select Model"),
-                        dcc.Dropdown(
-                           id='model',
-                           options=[{'label': 'Cluster', 'value': 1},{'label': 'Random Forest', 'value': 2}],
-                           value=1,
-                           ),
+       # dbc.Row(
+        #    [
+         #       dbc.Col(
+          #          [
+           #             html.H2("Select Student"),
+            #            dcc.Dropdown(
+             #              id='student',
+              #             options=opt_st,
+               #            value=opt_st[0]['value'],
+                #           ),
+                 #       html.Br(),
+                  #      html.H2("Select Model"),
+                   #     dcc.Dropdown(
+                    #       id='model',
+                     #      options=[{'label': 'Cluster', 'value': 1},{'label': 'Random Forest', 'value': 2}],
+                      #     value=1,
+                       #    ),
                        
-                    ],
+                    #],
                     width=3,
                 ),
                 dbc.Col(
                     [
-                        html.H2("Student Data"),
-                        html.H3("GPA"),
-                        daq.GraduatedBar(id='student_gpa',
-                                         color={"gradient":True,"ranges":{"red":[0,6],"yellow":[6,8],"green":[8,10]}},
-                                         showCurrentValue=True,
-                                         value=10
+                    #    html.H2("Student Data"),
+                     #   html.H3("GPA"),
+                      #  daq.GraduatedBar(id='student_gpa',
+                       #                  color={"gradient":True,"ranges":{"red":[0,6],"yellow":[6,8],"green":[8,10]}},
+                        #                 showCurrentValue=True,
+                         #                value=10
                                          ),
-                        html.Br(),
-                        html.H3("Factors"),
-                        dcc.Graph(id='student_graph'),
-                        html.H2("Semester Data"),
-                        dbc.Container([dbc.Row([
-                                dbc.Col([
-                                        daq.LEDDisplay(id="order",
-                                                       label="Semester Order",
-                                                       value="0",
-                                                       size=64,
-                                                       color="#FF5E5E"
-                                                       ),
-                                          ]),
-                                dbc.Col([
-                                        daq.LEDDisplay(id="beta",
-                                                       label="Total Beta",
-                                                       value="0",
-                                                       size=64,
-                                                       color="#FF5E5E"
-                                                       ),
-                                          ]),
-                                dbc.Col([
-                                        daq.LEDDisplay(id="classes",
-                                                       label="Number of Classes",
-                                                       value="0",
-                                                       size=64,
-                                                       color="#FF5E5E"
-                                                       ),
-                                           ]),
-                                ])]),
-                        html.Br(),
-                        html.H2("Prediction"),
-                        dbc.Container([dbc.Row([
-                                dbc.Col([
-                                        daq.Gauge(id='risk-gauge',
-                                                  showCurrentValue=True,
-                                                  color={"gradient":True,"ranges":{"red":[0,0.4],"yellow":[0.4,0.7],"green":[0.7,1]}},
-                                                  label="Risk",
-                                                  max=1,
-                                                  min=0,
-                                                  value=1
-                                                  ),
-                                        ]),
-                                dbc.Col([
-                                        daq.Gauge(id='certainty-gauge',
-                                                  showCurrentValue=True,
-                                                  color={"gradient":True,"ranges":{"red":[0,200],"yellow":[200,500],"green":[500,1000]}},
-                                                  label="Certainty",
-                                                  max=1000,
-                                                  min=0,
-                                                  value=1
-                                                  ),
-                                        ]),
-                             ])]),
-                    ],
-                ),
-            ]
-        )
-    ],
-    className="mt-4",
-)
+                        #html.Br(),
+                        #html.H3("Factors"),
+                        #dcc.Graph(id='student_graph'),
+                        #html.H2("Semester Data"),
+                      #  dbc.Container([dbc.Row([
+                       #         dbc.Col([
+                        #                daq.LEDDisplay(id="order",
+                         #                              label="Semester Order",
+                          #                             value="0",
+                           #                            size=64,
+                            #                           color="#FF5E5E"
+                             #                          ),
+                              #            ]),
+                               # dbc.Col([
+                                #        daq.LEDDisplay(id="beta",
+                                 #                      label="Total Beta",
+                                  #                     value="0",
+                                   #                    size=64,
+                                    #                   color="#FF5E5E"
+                                     #                  ),
+                                      #    ]),
+                       #         dbc.Col([
+                        #                daq.LEDDisplay(id="classes",
+                         #                              label="Number of Classes",
+                          #                             value="0",
+                           #                            size=64,
+                            #                           color="#FF5E5E"
+                             #                          ),
+                              #             ]),
+                               # ])]),
+                      #  html.Br(),
+                       # html.H2("Prediction"),
+                       # dbc.Container([dbc.Row([
+                        #        dbc.Col([
+                         #               daq.Gauge(id='risk-gauge',
+                          #                        showCurrentValue=True,
+                           #                       color={"gradient":True,"ranges":{"red":[0,0.4],"yellow":[0.4,0.7],"green":[0.7,1]}},
+                            #                      label="Risk",
+                             #                     max=1,
+                              #                    min=0,
+                               #                   value=1
+                                #                  ),
+                                 #       ]),
+                                #dbc.Col([
+                                 #       daq.Gauge(id='certainty-gauge',
+                                  #               color={"gradient":True,"ranges":{"red":[0,200],"yellow":[200,500],"green":[500,1000]}},
+                                   #               label="Certainty",
+                                    #              max=1000,
+                                     #             min=0,
+                                      #            value=1
+                                       #           ),
+                                        #]),
+                            # ])]),
+                    #],
+                #),
+            #]
+        #)
+    #],
+   # className="mt-4",
+#)
 
 app.layout = html.Div(children=[navbar,body]
 )
@@ -212,7 +211,7 @@ app.layout = html.Div(children=[navbar,body]
 #    [Output("student_graph", "figure"),
  #    Output("student_gpa", "value"),
   #   Output("order", "value"),
-     Output("beta", "value"),
+ #    Output("beta", "value"),
    #  Output("classes", "value"),
     # Output("risk-gauge", "value"),
      #Output("certainty-gauge", "value")],
@@ -221,7 +220,7 @@ app.layout = html.Div(children=[navbar,body]
 )
 
 def update_plots(student_value,model_value):
-    prior_prob_count,prior_percent_correct,score,hints,result=student_data['result'].values[0]
+    ProbCount,PercentCorrect,Hints,Result=student_data['Result'].values[0]
 #=get_student_data(student_value)
  #   order,beta_total,num_classes=get_semester_data(student_value)
     
